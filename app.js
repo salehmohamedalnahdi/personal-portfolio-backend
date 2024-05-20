@@ -4,16 +4,85 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 const portfolioRoutes=require('./routes/portfolioRoute.js')
 
+const {PrismaClient}=require ('@prisma/client');
+const prisma=new PrismaClient();
 
 app.use('/',portfolioRoutes)
-
 app.listen(3000,()=>console.log("connecting is done"))
 
+app.get('/a',async(req,res)=>{
+  const users = await prisma.user.findMany({
+    include: { achievements: true} 
+  });
+  res.json(users);
+})
 
 
+/*app.get('/a',async(req,res)=>{
+  const users = await prisma.user.findMany({
+    include: { achievements: true} 
+  });
+  res.json(users);
+})
+app.get('/b',async(req,res)=>{
+  const achievement = await prisma.achievement.findMany();
+  res.json(achievement);
+})
 
+app.delete("/d",async(req,res)=>{
+  try {
+   const {email}=req.body
+   const checkUser=await prisma.user.findUnique({
+    where: { email: email }
+  })
+  if(!checkUser){return res.json({ error: 'user is not found.' })}
+   const deleteaAhievement=await prisma.achievement.deleteMany({
+     where: { userEmail: email }
+    });
+   const deleteUser=await prisma.user.delete({ 
+     where: { email: email }
+   });
+   res.json(deleteUser)
+ }
+   catch (error) {
+   console.error('Error in user controller:', error);
+     res.json({ error: 'Failed to delete portfolio.' });
+  }
+ })
 
+app.patch("/ab",async(req,res)=> {
+  try {
+   const {name, email, age ,title,content}=req.body
+   const checkUser=await prisma.user.findUnique({
+    where: { email: email }
+   })
+   if(!checkUser){
+    return res.json({ error: 'email is not exsisted' });
+  }
+   
+  const updateachievement=await prisma.achievement.updateMany({
+   where: { userEmail: email },
+   data:{
+     title,
+     content,
+   }
+ })
 
+ const updateUser=await prisma.user.updateMany({
+  where: { email: email },
+  data:{
+    name,
+    age,
+  },
+
+});
+ res.json([updateUser,updateachievement])
+}
+  catch (error) {
+  console.error('Error in user controller:', error);
+    res.status(500).json({ error: 'Failed to Update portfolio.' });
+ }
+})*/
 
 
 /* app.post('/', async (req, res) => {
