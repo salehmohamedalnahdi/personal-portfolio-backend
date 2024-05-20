@@ -2,7 +2,7 @@ const service = require('../services/portfolioServices');
 
 async function getUsers(req, res) {
   try {
-    const userId = 1; // Set the desired user ID or retrieve it from the request
+    const userId = 1; 
     const users = await service.getUsersWithAchievements(userId);
     res.json(users);
   } catch (error) {
@@ -58,8 +58,3 @@ module.exports = {
   getUsers,createPortfolioCont,deletePortfolioCont,updatePortfolioCont
 };
 
-/*  const deleteUser= await prisma.user.delete({})
-  await prisma.user.delete({
-    where: { id: parseInt(userId) },
-    include: { achievements: true },
-  });*/
