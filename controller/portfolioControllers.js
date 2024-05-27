@@ -1,4 +1,5 @@
 const service = require('../services/portfolioServices');
+const schema=require("../validation/validationSchema")
 
 async function getUsers(req, res) {
   try {
@@ -12,9 +13,13 @@ async function getUsers(req, res) {
 }
 
 async function createPortfolioCont(req,res){
+  const createSchema=schema.createSchema()
+  const {error,value}=createSchema.validate(req.body)
+  if (error){
+    return res.status(400).json({ error: error.details[0].message })
+  }
   try {
-    const requestBody=req.body
-    const newPortfolio=await service.addPortfolio(requestBody)
+    const newPortfolio=await service.addPortfolio(value)
     res.json(newPortfolio);
   } catch (error) {
     console.error('Error in user controller:', error);
@@ -23,13 +28,18 @@ async function createPortfolioCont(req,res){
 }
 
 async function deletePortfolioCont(req,res) {
+  const createSchema=schema.updateAndDeleteSchema()
+  const {error,value}=createSchema.validate(req.body)
+  if (error){
+    return res.status(400).json({ error: error.details[0].message })
+  }
+
  try {
-  const requestBody=req.body
-  const checkUser= await service.check(requestBody)
+  const checkUser= await service.check(value)
   if(!checkUser){
     return res.json({ error: 'email is not exsisted' });
   }
- const deleteaPortfolio=await service.deleteaPortfolio(requestBody)
+ const deleteaPortfolio=await service.deleteaPortfolio(value)
   res.json(deleteaPortfolio)
 }
   catch (error) {
@@ -39,14 +49,18 @@ async function deletePortfolioCont(req,res) {
 }
 
 async function updatePortfolioCont(req,res) {
+  const createSchema=schema.updateAndDeleteSchema()
+  const {error,value}=createSchema.validate(req.body)
+  if (error){
+    return res.status(400).json({ error: error.details[0].message })
+  }
   try {
    //the body must be as {name:, email:, age: ,title:,content:}
-   const requestBody=req.body
-   const checkUser= await service.check(requestBody)
+   const checkUser= await service.check(value)
    if(!checkUser){
      return res.json({ error: 'email is not exsisted' });
    }
-   await service.updatePortfolio(requestBody)
+   await service.updatePortfolio(value)
   res.json({message:"updateed is done"})
  }
    catch (error) {
